@@ -5,14 +5,19 @@
 FROM jrei/systemd-debian:12
 
 # Install dependencies
-RUN apt-get update && apt-get install -y git curl
+RUN apt-get update && apt-get install -y git curl docker.io
 
 # Install Sops
 ARG SOPS_VERSION=v3.11.0
-
-# 1. SOPS (Binaire statique)
 RUN curl -L "https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64" -o /usr/local/bin/sops \
     && chmod +x /usr/local/bin/sops
+
+# Install docker compose
+ARG COMPOSE_VERSION=v2.29.1
+RUN mkdir -p /usr/libexec/docker/cli-plugins \
+    && curl -SL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose \
+    && chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+
 
 # 2. SSH-TO-AGE (Pour convertir les clés si besoin)
 RUN curl -L https://github.com/micahflee/ssh-to-age/releases/latest/download/ssh-to-age-linux-amd64 -o /usr/local/bin/ssh-to-age \
