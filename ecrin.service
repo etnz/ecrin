@@ -1,0 +1,30 @@
+[Unit]
+Description=Ecrin GitOps (Loop)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/ecrin
+
+Environment="SOPS_AGE_KEY_FILE=/root/age.key"
+
+# Use the restart to create an infinite loop
+Restart=always
+RestartSec=300
+
+# Pull from origin.
+ExecStartPre=/usr/bin/git pull origin main
+
+# start Docker in a sops environment
+ExecStart=/usr/local/bin/sops exec-env secrets.enc.env -- /usr/bin/docker compose up -d --remove-orphans
+
+# Clean up
+ExecStartPost=-/usr/bin/docker image prune -f
+
+# Since git pull might have made changes in this very file we force system.d to restart.
+ExecStartPost=/usr/bin/systemctl daemon-reload
+
+[Install]
+WantedBy=multi-user.target
