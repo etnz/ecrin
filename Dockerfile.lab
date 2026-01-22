@@ -5,7 +5,18 @@
 FROM jrei/systemd-debian:12
 
 # Install dependencies
-# RUN apt-get update && apt-get install -y sops
+RUN apt-get update && apt-get install -y git curl
+
+# Install Sops
+ARG SOPS_VERSION=v3.11.0
+
+# 1. SOPS (Binaire statique)
+RUN curl -L "https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64" -o /usr/local/bin/sops \
+    && chmod +x /usr/local/bin/sops
+
+# 2. SSH-TO-AGE (Pour convertir les clés si besoin)
+RUN curl -L https://github.com/micahflee/ssh-to-age/releases/latest/download/ssh-to-age-linux-amd64 -o /usr/local/bin/ssh-to-age \
+    && chmod +x /usr/local/bin/ssh-to-age
 
 WORKDIR /root/ecrin
 

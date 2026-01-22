@@ -15,7 +15,7 @@ Restart=always
 RestartSec=300
 
 # Pull from origin.
-ExecStartPre=/usr/bin/git pull origin main
+ExecStartPre=/usr/bin/git pull
 
 # start Docker in a sops environment
 ExecStart=/usr/local/bin/sops exec-env secrets.enc.env -- /usr/bin/docker compose up -d --remove-orphans
