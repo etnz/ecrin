@@ -1,0 +1,12 @@
+# This Dockerfile is to create an isolated system.d environement to test
+# the system.d layer.
+
+# Start from a simple debian with systemd activated (this is not the default in containers)
+FROM jrei/systemd-debian:12
+
+# Install dependencies
+# RUN apt-get update && apt-get install -y sops
+
+WORKDIR /root/ecrin
+
+
